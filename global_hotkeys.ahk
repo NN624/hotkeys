@@ -82,13 +82,13 @@ IME_CHANGE()    {
 ; Return
 
 ; F19 key map
-F19 & d::Send {BackSpace}
-F19 & f::Send {Enter}
+F19 & f::Send {BackSpace}
+F19 & j::Send {Enter}
 F19::
   F19State := "Off" ; Off | Tapping | Pressing
   If (F19State = "Off") {
       F19State := "Tapping"
-      KeyWait, F19, T0.2
+      KeyWait, F19, T0.1
       If (ErrorLevel) {
         F19State := "Pressing"
       } Else {
