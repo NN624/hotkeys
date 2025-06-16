@@ -1,2 +1,2 @@
 # hotkeys
-Hotkeysの設定を共有するためのリポジトリ
+Hotkeysの設定をPC間で共有するためのリポジトリ
