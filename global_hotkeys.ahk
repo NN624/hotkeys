@@ -82,9 +82,8 @@ IME_CHANGE()    {
 ; Return
 
 ; F19 key map
-F19 & j::Send {Enter}
-F19 & f::Send {BackSpace}
-F19 & d::Send {Delete}
+F19 & n::Send {Volume_Down}
+F19 & m::Send {Volume_Up}
 
 F19::
   F19State := "Off" ; Off | Tapping | Pressing
