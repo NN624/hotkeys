@@ -55,17 +55,18 @@ IME_GET(WinTitle:="A")  {
 #F5::Send "{Media_Play_Pause}"
 
 ; previous tab
-F15 & Left:: Send "{Ctrl down}{Shift down}{Tab}{Ctrl up}{Shift up}"
+F19 & Up:: Send "{Ctrl down}{Shift down}{Tab}{Ctrl up}{Shift up}"
 ; next tab
-F15 & Right:: Send "{Ctrl down}{Tab}{Ctrl up}"
+F19 & Down:: Send "{Ctrl down}{Tab}{Ctrl up}"
 
 ; previous page
-F16 & Left:: Send "{Alt down}{Left}{Alt up}"
+F19 & Left:: Send "{Alt down}{Left}{Alt up}"
 ; next page
-F16 & Right:: Send "{Alt down}{Right}{Alt up}"
+F19 & Right:: Send "{Alt down}{Right}{Alt up}"
 
 ; Change IME state
-F19::IME_GET() ? IME_SET(0) : IME_SET(1)
+F18::IME_SET(0)
+F19::IME_SET(1)
 
 ; convert to eisu
 F19 & a::{
@@ -74,10 +75,6 @@ if IME_GET() = 1
     Send "{Enter}"
 return
 }
-
-F19 & j:: Send "{Enter}"
-
-F19 & k:: Send "{BackSpace}"
 
 ; 【Fn+Shift+Right】 -------------------------------------
 ; fn up down left right
