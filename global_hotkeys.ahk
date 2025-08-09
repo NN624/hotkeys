@@ -55,14 +55,14 @@ IME_GET(WinTitle:="A")  {
 #F5::Send "{Media_Play_Pause}"
 
 ; previous tab
-F19 & Up:: Send "{Ctrl down}{Shift down}{Tab}{Ctrl up}{Shift up}"
+F19 & l:: Send "{Ctrl down}{Shift down}{Tab}{Ctrl up}{Shift up}"
 ; next tab
-F19 & Down:: Send "{Ctrl down}{Tab}{Ctrl up}"
+F19 & k:: Send "{Ctrl down}{Tab}{Ctrl up}"
 
 ; previous page
-F19 & Left:: Send "{Alt down}{Left}{Alt up}"
+F19 & j:: Send "{Alt down}{Left}{Alt up}"
 ; next page
-F19 & Right:: Send "{Alt down}{Right}{Alt up}"
+F19 & vkBA:: Send "{Alt down}{Right}{Alt up}"
 
 ; Change IME state
 F18::IME_SET(0)
