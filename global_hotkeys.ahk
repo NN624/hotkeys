@@ -54,6 +54,22 @@ IME_GET(WinTitle:="A")  {
 ; Play pause media
 #F5::Send "{Media_Play_Pause}"
 
+; Code block 
+#F17:: {
+    Send "```````n"
+    Send("^v") ; フォーマットされた内容を貼り付け
+    Sleep(100) ; 少し待機
+    Send "`n```````n"
+}
+
+; F17:: {
+;     ClipSaved := ClipboardAll() ; 現在のクリップボードを保存
+;     Clipboard := "a" . ClipboardAll() . "a" ; クリップボードの内容をフォーマット
+;     Send("^v") ; フォーマットされた内容を貼り付け
+;     Sleep(100) ; 少し待機
+;     Clipboard := ClipSaved ; 元のクリップボードを復元
+; }
+
 ; previous tab
 F19 & l:: Send "{Ctrl down}{Shift down}{Tab}{Ctrl up}{Shift up}"
 ; next tab
