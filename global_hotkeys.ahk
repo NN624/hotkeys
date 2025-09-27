@@ -71,21 +71,21 @@ IME_GET(WinTitle:="A")  {
 ; }
 
 ; previous tab
-F19 & l:: Send "{Ctrl down}{Shift down}{Tab}{Ctrl up}{Shift up}"
+F18 & l:: Send "{Ctrl down}{Shift down}{Tab}{Ctrl up}{Shift up}"
 ; next tab
-F19 & k:: Send "{Ctrl down}{Tab}{Ctrl up}"
+F18 & k:: Send "{Ctrl down}{Tab}{Ctrl up}"
 
 ; previous page
-F19 & j:: Send "{Alt down}{Left}{Alt up}"
+F18 & j:: Send "{Alt down}{Left}{Alt up}"
 ; next page
-F19 & vkBA:: Send "{Alt down}{Right}{Alt up}"
+F18 & vkBA:: Send "{Alt down}{Right}{Alt up}"
 
 ; Change IME state
 F18::IME_SET(0)
 F19::IME_SET(1)
 
 ; convert to eisu
-F19 & a::{
+F18 & a::{
 if IME_GET() = 1
     Send "{F10}"
     Send "{Enter}"
