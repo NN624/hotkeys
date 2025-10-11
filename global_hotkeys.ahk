@@ -56,37 +56,16 @@ IME_GET(WinTitle:="A")  {
 #F6::Send "!{Left}"
 #F7::Send "!{Right}"
 
-; Code block 
-; #F17:: {
-;     Send "```````n"
-;     Send("^v") ; フォーマットされた内容を貼り付け
-;     Sleep(100) ; 少し待機
-;     Send "`n```````n"
-; }
-
 F17:: {
     Send "``````" ; 最初の3つのバッククォート
     Send A_Clipboard ; クリップボードの内容
     Send "``````" ; 最後の3つのバッククォート
 }
 
-; previous tab
-; F18 & l:: Send "{Ctrl down}{Shift down}{Tab}{Ctrl up}{Shift up}"
-; next tab
-; F18 & k:: Send "{Ctrl down}{Tab}{Ctrl up}"
-
-; previous page
-; F18 & j:: Send "{Alt down}{Left}{Alt up}"
-; next page
-; F18 & vkBA:: Send "{Alt down}{Right}{Alt up}"
-
-; Change IME state
-; F18::IME_SET(0)
-; F19::IME_SET(1)
 F19::Send "{Alt down}{``}{Alt up}"
 
 ; convert to eisu
-F18 & a::{
+F19 & a::{
 if IME_GET() = 1
     Send "{F10}"
     Send "{Enter}"
