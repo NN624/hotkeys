@@ -52,9 +52,14 @@ IME_GET(WinTitle:="A")  {
 }
 
 ; Play pause media
-#F5::Send "{Media_Play_Pause}"
 #F6::Send "!{Left}"
 #F7::Send "!{Right}"
+#F8::{
+    Send "{Alt down}{tab}"
+    Send "{Alt up}"
+return
+}
+
 
 F19::Send "{Alt down}{``}{Alt up}"
 
@@ -67,39 +72,36 @@ return
 }
 
 ; convert to kana
-F19 & s:: {
-    ; 一時的にクリップボードを保存
-    ClipSaved := A_Clipboard
-    A_Clipboard := ""
+; F19 & s:: {
+;     ; 一時的にクリップボードを保存
+;     ClipSaved := A_Clipboard
+;     A_Clipboard := ""
 
-    ; 選択中の文字をコピー
-    Send("^c")
-    if !ClipWait(0.5) {
-        A_Clipboard := ClipSaved
-        return
-    }
+;     ; 選択中の文字をコピー
+;     Send("^c")
+;     if !ClipWait(0.5) {
+;         A_Clipboard := ClipSaved
+;         return
+;     }
 
-    InputText := A_Clipboard
-    A_Clipboard := ClipSaved
+;     InputText := A_Clipboard
+;     A_Clipboard := ClipSaved
 
-    ; 選択範囲を削除
-    Send("{Backspace}")
+;     ; 選択範囲を削除
+;     Send("{Backspace}")
 
-    ; 日本語入力モードをONにする
-    IME_SET(1)
+;     ; 日本語入力モードをONにする
+;     IME_SET(1)
 
-    ; 少し待ってから再入力
-    Sleep(200)
-    for char in StrSplit(InputText)
-        SendInput(char)
-}
+;     ; 少し待ってから再入力
+;     Sleep(200)
+;     for char in StrSplit(InputText)
+;         SendInput(char)
+; }
 
-; クリップボードの内容をバッククォート3つで囲んで貼り付け
-F19 & q:: {
-    Send "``````" ; 最初の3つのバッククォート
-    Send A_Clipboard ; クリップボードの内容
-    Send "``````" ; 最後の3つのバッククォート
-}
+F19 & n::Send "{Volume_Down}"
+F19 & m::Send "{Volume_Up}"
+F19 & ,::Send "{Media_Play_Pause}"
 
 ; Alt + 矢印キーによるページナビゲーション設定
 ; <!    = 左Alt
