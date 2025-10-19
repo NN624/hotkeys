@@ -51,111 +51,129 @@ IME_GET(WinTitle:="A")  {
             ,  "Int", 0)      ;lParam  : 0
 }
 
-; Play pause media
-#F6::Send "!{Left}"
-#F7::Send "!{Right}"
-#F8::{
-    Send "{Alt down}{tab}"
-    Send "{Alt up}"
-return
-}
-
-
 F19::Send "{Alt down}{``}{Alt up}"
-
-; convert to eisu
-F19 & a::{
-if IME_GET() = 1
-    Send "{F10}"
-    Send "{Enter}"
-return
-}
-
-; convert to kana
-; F19 & s:: {
-;     ; 一時的にクリップボードを保存
-;     ClipSaved := A_Clipboard
-;     A_Clipboard := ""
-
-;     ; 選択中の文字をコピー
-;     Send("^c")
-;     if !ClipWait(0.5) {
-;         A_Clipboard := ClipSaved
-;         return
-;     }
-
-;     InputText := A_Clipboard
-;     A_Clipboard := ClipSaved
-
-;     ; 選択範囲を削除
-;     Send("{Backspace}")
-
-;     ; 日本語入力モードをONにする
-;     IME_SET(1)
-
-;     ; 少し待ってから再入力
-;     Sleep(200)
-;     for char in StrSplit(InputText)
-;         SendInput(char)
-; }
-
 F19 & n::Send "{Volume_Down}"
 F19 & m::Send "{Volume_Up}"
 F19 & ,::Send "{Media_Play_Pause}"
+F19 & p::Send "{Ctrl Down}{Shift Down}{P Down}{P Up}{Shift Up}{Ctrl Up}"
 
-; Alt + 矢印キーによるページナビゲーション設定
-; <!    = 左Alt
-; <^    = 左Ctrl
-; +     = Shift
+; ####### rikanaa.ahk #######
+; --- グローバル変数 ---
+g_loggedKeys := ""
+g_logMaxLength := 60
+g_isDebug := false        ; デバッグモードフラグ
+g_logFile := "debug_log.txt"
 
-; [Alt + 上下左右] ------------
-; Alt + 上下 = Page Up/Down
-<!Up::Send "{PgUp}"           ; Alt + ↑ = Page Up
-<^<!Up::Send "^{PgUp}"       ; Ctrl + Alt + ↑ = Ctrl + Page Up
-<!+Up::Send "+{PgUp}"        ; Alt + Shift + ↑ = Shift + Page Up
-<^<!+Up::Send "^+{PgUp}"     ; Ctrl + Alt + Shift + ↑ = Ctrl + Shift + Page Up
+; --- 入力判定用のキー（英字 + ハイフン） ---
+validChars := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-"
 
-<!Down::Send "{PgDn}"        ; Alt + ↓ = Page Down
-<^<!Down::Send "^{PgDn}"     ; Ctrl + Alt + ↓ = Ctrl + Page Down
-<!+Down::Send "+{PgDn}"      ; Alt + Shift + ↓ = Shift + Page Down
-<^<!+Down::Send "^+{PgDn}"   ; Ctrl + Alt + Shift + ↓ = Ctrl + Shift + Page Down
+; --- キーボードフック設定 ---
+SetTimer(MonitorKeys, 10)
 
-; Alt + 左右 = Home/End
-<!Left::Send "{Home}"         ; Alt + ← = Home（行頭へ）
-<^<!Left::Send "^{Home}"     ; Ctrl + Alt + ← = Ctrl + Home（文書の先頭へ）
-<!+Left::Send "+{Home}"      ; Alt + Shift + ← = Shift + Home（行頭まで選択）
-<^<!+Left::Send "^+{Home}"   ; Ctrl + Alt + Shift + ← = Ctrl + Shift + Home（文書先頭まで選択）
+; --- 左クリック検出 ---
+~LButton:: {
+    ClearLog()
+}
 
-<!Right::Send "{End}"         ; Alt + → = End（行末へ）
-<^<!Right::Send "^{End}"     ; Ctrl + Alt + → = Ctrl + End（文書の末尾へ）
-<!+Right::Send "+{End}"      ; Alt + Shift + → = Shift + End（行末まで選択）
-<^<!+Right::Send "^+{End}"   ; Ctrl + Alt + Shift + → = Ctrl + Shift + End（文書末尾まで選択）
+; --- F19 + f 同時押し検出（IMEオン＋再生） ---
+~F17:: {
+    global g_loggedKeys
+    Log("Change active key detected, loggedKeys=" g_loggedKeys)
 
-; 単体の左クリック → 通常の左クリックとして動作させつつ “C” を送る、例
-; “~” を付けることで元の左クリック動作（マウスクリック）が保持される
-; F17:: {
-;     ; ただし、Ctrl や Shift 等が押されているときは無視させたい → 条件を付ける
-;     if ( GetKeyState("Ctrl", "P") or GetKeyState("Shift", "P") or GetKeyState("Alt", "P") )
-;     {
-;         ; 他の修飾キー付きクリックとして扱わせたいので、ここでは何もしない
-;         ; return しないことで、上の ^LButton／+LButton のブロックが優先されるように
-;         return
-;     }
-;     ; 単体クリック時の処理（たとえば “c” を送る）
-;     Send "{LButton}"
-;     return
-; }
+    if (IME_GET() = 0) {
+        Loop StrLen(g_loggedKeys) {
+            Send("{Backspace}")
+            Sleep(10)  ; ← バックスペース間の遅延（必要に応じて調整）
+        }
+        ; --- IMEオンにして再入力 ---
+        IME_Set(1)
+        Sleep(50)
+        SendText(g_loggedKeys)
+    }else{
+        Send "{F10}"
+        Sleep(50)
+        Send "{Enter}"
+        IME_SET(0)
+    }
 
-; F17の単体クリックと押しながらの移動処理 ------------
-; F17:: {
-;     ; 単体クリックの場合は左クリック
-;     if !GetKeyState("Up", "P") and !GetKeyState("Down", "P") {
-;         Send "{LButton}"
-;     }
-; }
+    g_loggedKeys := ""
+}
 
-; ; F17を押しながらの上下移動でスクロール
-; #HotIf GetKeyState("F17", "P")
-;     Up::Send "{WheelUp}"    ; 上スクロール
-;     Down::Send "{WheelDown}" ; 下スクロール
-; #HotIf
+; --- キー監視処理 ---
+MonitorKeys() {
+    global g_loggedKeys, validChars, g_logMaxLength
+
+    ; --- F17が押されたら無視 ---
+    if (GetKeyState("F17", "P")) {
+        return
+    }
+
+    key := GetKeyPressed()
+    if (key != "") {
+        Log("Key pressed: " key)
+        if InStr(validChars, key) {
+            g_loggedKeys .= key
+            if (StrLen(g_loggedKeys) > g_logMaxLength) {
+                ClearLog()
+            }
+        } else {
+            ClearLog()
+        }
+        Log("g_loggedKeys: " g_loggedKeys)
+    }
+}
+
+; --- ログのクリア ---
+ClearLog() {
+    global g_loggedKeys
+    g_loggedKeys := ""
+}
+
+; --- キー取得（英字と記号のみ対象） ---
+GetKeyPressed() {
+    static prevState := Map()
+    Loop 254 { ; ← 修正：1〜254の範囲のみチェック
+        key := Format("{:02X}", A_Index)
+        if (key = "00")
+            continue  ; ← vk00をスキップ（念のため安全策）
+        state := GetKeyState("vk" key, "P")
+        if (state && !prevState.Has(key)) {
+            prevState[key] := true
+            char := VkToChar(key)
+            return char
+        } else if (!state && prevState.Has(key)) {
+            prevState.Delete(key)
+        }
+    }
+    return ""
+}
+
+; --- 仮想キーコードから文字へ変換 ---
+VkToChar(vk) {
+    try {
+        sc := GetKeySC("vk" vk)  ; ← 修正：GetKeyScanCode → GetKeySC
+        return GetKeyName(Format("sc{:x}", sc))
+    } catch {
+        return ""
+    }
+}
+
+; --- SendText 互換 ---
+SendText(text) {
+    ; 1文字ずつ送信して変換入力
+    for char in StrSplit(text) {
+        Send(char)
+        Log("SendText: " text)
+    }
+}
+
+; --- デバッグ用ログ関数 ---
+Log(msg) {
+    global g_isDebug, g_logFile
+    if (!g_isDebug) {
+        return
+    }
+    ; ToolTip(msg)
+    FileAppend(A_Now " - " msg "`n", g_logFile, "UTF-8")
+}
+; ####### rikanaa.ahk #######
