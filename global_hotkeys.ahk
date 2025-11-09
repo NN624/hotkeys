@@ -177,3 +177,86 @@ Log(msg) {
     FileAppend(A_Now " - " msg "`n", g_logFile, "UTF-8")
 }
 ; ####### rikanaa.ahk #######
+
+; ####### App Active Hide #######
+; ; ウィンドウタイトルを完全一致モードに設定
+; SetTitleMatchMode 3
+
+; appPath := "C:\Users\noait\AppData\Local\AnthropicClaude\claude.exe"
+
+; ; アプリケーションのウィンドウタイトル（部分一致でOK）
+; ; 例: "メモ帳", "Google Chrome", "Visual Studio Code" など
+; appTitle := "Claude"
+
+; ; ホットキーの設定（Ctrl + Alt + N）
+; ; 変更したい場合は ^!n の部分を変更してください
+; ^Space::ToggleApp()
+
+; ; ===== メイン関数 =====
+; ToggleApp() {
+;     global appPath, appTitle
+    
+;     ; ウィンドウが存在するか確認
+;     if WinExist(appTitle) {
+;         ; ウィンドウが最小化されているか確認
+;         if WinGetMinMax(appTitle) = -1 {
+;             ; 最小化されている場合は復元してアクティブ化
+;             WinRestore appTitle
+;             WinActivate appTitle
+;             ; 常に最前面に表示
+;             WinSetAlwaysOnTop true, appTitle
+;         } else if WinActive(appTitle) {
+;             ; アクティブな場合は最小化する
+;             WinMinimize appTitle
+;         } else {
+;             ; 非アクティブな場合は表示してアクティブ化
+;             WinActivate appTitle
+;             ; 常に最前面に表示
+;             WinSetAlwaysOnTop true, appTitle
+;         }
+;     } else {
+;         ; ウィンドウが存在しない場合は起動
+;         try {
+;             Run appPath
+;             ; 起動後、ウィンドウが表示されるまで待機（3秒）
+;             if WinWait(appTitle, , 3) {
+;                 ; 常に最前面に表示
+;                 WinSetAlwaysOnTop true, appTitle
+;             }
+;         } catch as err {
+;             MsgBox "アプリケーションの起動に失敗しました:`n" err.Message
+;         }
+;     }
+; }
+; ####### App Active Hide #######
+
+; 単語登録
+; --- 共通ヘルパー ---
+SendWithIMERestore(text) {
+    prevIME := IME_GET()
+    IME_SET(0)               ; 一時的にIMEオフ
+    SendText(text)
+    Sleep(100)               ; 入力の安定化（必要なら調整）
+    IME_SET(prevIME)         ; 元の状態に戻す
+}
+
+; --- 曜日付き日付を入力 ---
+F19 & 1:: {
+    days := ["日", "月", "火", "水", "木", "金", "土"]
+    date := A_Now
+    year := SubStr(date, 1, 4)
+    month := SubStr(date, 5, 2)
+    day := SubStr(date, 7, 2)
+    dow := FormatTime(date, "WDay") - 1
+    weekday := days[dow + 1]
+    formatted := Format("{1}年{2}月{3}日({4})", year, month + 0, day + 0, weekday)
+    SendWithIMERestore(formatted)
+}
+
+; --- 時刻を入力 ---
+F19 & 2:: {
+    time := FormatTime(A_Now, "HH:mm")
+    SendWithIMERestore(time)
+}
+F19 & 3::SendInput ""
+F19 & 4::SendInput ""
