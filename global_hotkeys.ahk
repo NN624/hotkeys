@@ -51,11 +51,29 @@ IME_GET(WinTitle:="A")  {
             ,  "Int", 0)      ;lParam  : 0
 }
 
-F19::Send "{Alt down}{``}{Alt up}"
+F19::{
+    Send "{Alt down}{``}{Alt up}"
+    KeyWait "F19"  ; F19が離されるまで待機
+}
 F19 & n::Send "{Volume_Down}"
 F19 & m::Send "{Volume_Up}"
 F19 & ,::Send "{Media_Play_Pause}"
 F19 & p::Send "{Ctrl Down}{Shift Down}{P Down}{P Up}{Shift Up}{Ctrl Up}"
+; F19 + h で前のウィンドウ（Alt押しっぱなし対応）
+F19 & h::{
+    Send "{Alt down}{Shift down}{Tab}"
+    KeyWait "," ; カンマキーが離されるまで待機
+    Send "{Shift up}"
+}
+; F19 + l で次のウィンドウ（Alt押しっぱなし対応）
+F19 & l::{
+    Send "{Alt down}{Tab}"
+    KeyWait "." ; ピリオドキーが離されるまで待機
+}
+; F19キーが離されたら全て解放
+~F19 up::{
+    Send "{Alt up}{Shift up}"
+}
 
 ; ####### rikanaa.ahk #######
 ; --- グローバル変数 ---
@@ -180,54 +198,54 @@ Log(msg) {
 
 ; ####### App Active Hide #######
 ; ; ウィンドウタイトルを完全一致モードに設定
-; SetTitleMatchMode 3
+SetTitleMatchMode 3
 
-; appPath := "C:\Users\noait\AppData\Local\AnthropicClaude\claude.exe"
+appPath := "C:\Users\noait\AppData\Local\AnthropicClaude\claude.exe"
 
-; ; アプリケーションのウィンドウタイトル（部分一致でOK）
-; ; 例: "メモ帳", "Google Chrome", "Visual Studio Code" など
-; appTitle := "Claude"
+; アプリケーションのウィンドウタイトル（部分一致でOK）
+; 例: "メモ帳", "Google Chrome", "Visual Studio Code" など
+appTitle := "Claude"
 
-; ; ホットキーの設定（Ctrl + Alt + N）
-; ; 変更したい場合は ^!n の部分を変更してください
-; ^Space::ToggleApp()
+; ホットキーの設定（Ctrl + Alt + N）
+; 変更したい場合は ^!n の部分を変更してください
+^Space::ToggleApp()
 
-; ; ===== メイン関数 =====
-; ToggleApp() {
-;     global appPath, appTitle
+; ===== メイン関数 =====
+ToggleApp() {
+    global appPath, appTitle
     
-;     ; ウィンドウが存在するか確認
-;     if WinExist(appTitle) {
-;         ; ウィンドウが最小化されているか確認
-;         if WinGetMinMax(appTitle) = -1 {
-;             ; 最小化されている場合は復元してアクティブ化
-;             WinRestore appTitle
-;             WinActivate appTitle
-;             ; 常に最前面に表示
-;             WinSetAlwaysOnTop true, appTitle
-;         } else if WinActive(appTitle) {
-;             ; アクティブな場合は最小化する
-;             WinMinimize appTitle
-;         } else {
-;             ; 非アクティブな場合は表示してアクティブ化
-;             WinActivate appTitle
-;             ; 常に最前面に表示
-;             WinSetAlwaysOnTop true, appTitle
-;         }
-;     } else {
-;         ; ウィンドウが存在しない場合は起動
-;         try {
-;             Run appPath
-;             ; 起動後、ウィンドウが表示されるまで待機（3秒）
-;             if WinWait(appTitle, , 3) {
-;                 ; 常に最前面に表示
-;                 WinSetAlwaysOnTop true, appTitle
-;             }
-;         } catch as err {
-;             MsgBox "アプリケーションの起動に失敗しました:`n" err.Message
-;         }
-;     }
-; }
+    ; ウィンドウが存在するか確認
+    if WinExist(appTitle) {
+        ; ウィンドウが最小化されているか確認
+        if WinGetMinMax(appTitle) = -1 {
+            ; 最小化されている場合は復元してアクティブ化
+            WinRestore appTitle
+            WinActivate appTitle
+            ; 常に最前面に表示
+            WinSetAlwaysOnTop true, appTitle
+        } else if WinActive(appTitle) {
+            ; アクティブな場合は最小化する
+            WinMinimize appTitle
+        } else {
+            ; 非アクティブな場合は表示してアクティブ化
+            WinActivate appTitle
+            ; 常に最前面に表示
+            WinSetAlwaysOnTop true, appTitle
+        }
+    } else {
+        ; ウィンドウが存在しない場合は起動
+        try {
+            Run appPath
+            ; 起動後、ウィンドウが表示されるまで待機（3秒）
+            if WinWait(appTitle, , 3) {
+                ; 常に最前面に表示
+                WinSetAlwaysOnTop true, appTitle
+            }
+        } catch as err {
+            MsgBox "アプリケーションの起動に失敗しました:`n" err.Message
+        }
+    }
+}
 ; ####### App Active Hide #######
 
 ; 単語登録
