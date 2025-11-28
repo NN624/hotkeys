@@ -51,22 +51,29 @@ IME_GET(WinTitle:="A")  {
             ,  "Int", 0)      ;lParam  : 0
 }
 
+; F18::{
+;     ; Send "{Alt down}{``}{Alt up}"
+;     IME_SET(0)
+;     KeyWait "F18"
+; }
+
 F19::{
     Send "{Alt down}{``}{Alt up}"
+    ; IME_SET(1)  ; IMEオンに設定
     KeyWait "F19"  ; F19が離されるまで待機
 }
 F19 & n::Send "{Volume_Down}"
 F19 & m::Send "{Volume_Up}"
 F19 & ,::Send "{Media_Play_Pause}"
 F19 & p::Send "{Ctrl Down}{Shift Down}{P Down}{P Up}{Shift Up}{Ctrl Up}"
-; F19 + h で前のウィンドウ（Alt押しっぱなし対応）
-F19 & h::{
+; F19 + u で前のウィンドウ（Alt押しっぱなし対応）
+F19 & u::{
     Send "{Alt down}{Shift down}{Tab}"
     KeyWait "," ; カンマキーが離されるまで待機
     Send "{Shift up}"
 }
-; F19 + l で次のウィンドウ（Alt押しっぱなし対応）
-F19 & l::{
+; F19 + i で次のウィンドウ（Alt押しっぱなし対応）
+F19 & i::{
     Send "{Alt down}{Tab}"
     KeyWait "." ; ピリオドキーが離されるまで待機
 }
@@ -74,6 +81,41 @@ F19 & l::{
 ~F19 up::{
     Send "{Alt up}{Shift up}"
 }
+
+; shift + F19 + k でshift + PgUp
+F19 & k::
+{
+    if GetKeyState("Shift", "P")
+        Send "{Shift Down}{PgUp}{Shift Up}"
+    else
+        Send "{PgUp}"
+}
+; shift + j でshift + Pgdn
+F19 & j::
+{
+    if GetKeyState("Shift", "P")
+        Send "{Shift Down}{Pgdn}{Shift Up}"
+    else
+        Send "{Pgdn}"
+}
+; shift + h でshift + Home
+F19 & h::
+{
+    if GetKeyState("Shift", "P")
+        Send "{Shift Down}{Home}{Shift Up}"
+    else
+        Send "{Home}"
+}
+; shift + l でshift + End
+F19 & l::
+{
+    if GetKeyState("Shift", "P")
+        Send "{Shift Down}{End}{Shift Up}"
+    else
+        Send "{End}"
+}
+
+
 
 ; ####### rikanaa.ahk #######
 ; --- グローバル変数 ---
