@@ -73,7 +73,7 @@ F18 & m::{
     Send "{Ctrl up}{Shift up}"
 }
 
-F19::{
+~F19::{
     Send "{Alt down}{``}{Alt up}"
     ; IME_SET(1)  ; IMEオンに設定
     KeyWait "F19"  ; F19が離されるまで待機
