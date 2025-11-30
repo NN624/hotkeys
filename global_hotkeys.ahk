@@ -57,6 +57,22 @@ IME_GET(WinTitle:="A")  {
 ;     KeyWait "F18"
 ; }
 
+; F18 + n で前のタブ
+F18 & n::{
+    Send "{Ctrl down}{Shift down}{Tab}"
+    KeyWait "," ; カンマキーが離されるまで待機
+    Send "{Shift up}"
+}
+; F18 + m で次のタブ
+F18 & m::{
+    Send "{Ctrl down}{Tab}"
+    KeyWait "." ; ピリオドキーが離されるまで待機
+}
+; F18キーが離されたら全て解放
+~F18 up::{
+    Send "{Ctrl up}{Shift up}"
+}
+
 F19::{
     Send "{Alt down}{``}{Alt up}"
     ; IME_SET(1)  ; IMEオンに設定
@@ -239,7 +255,7 @@ Log(msg) {
 ; ####### rikanaa.ahk #######
 
 ; ####### App Active Hide #######
-; ; ウィンドウタイトルを完全一致モードに設定
+; ウィンドウタイトルを完全一致モードに設定
 SetTitleMatchMode 3
 
 appPath := "C:\Users\noait\AppData\Local\AnthropicClaude\claude.exe"
