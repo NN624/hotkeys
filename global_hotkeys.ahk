@@ -282,7 +282,7 @@ appTitle := "Claude"
 
 ; ホットキーの設定（Ctrl + Alt + N）
 ; 変更したい場合は ^!n の部分を変更してください
-^Space::ToggleApp()
+; ^Space::ToggleApp()
 
 ; ===== メイン関数 =====
 ToggleApp() {
@@ -386,4 +386,51 @@ F16::`    ;         半角/全角     -> `
 ]::\        ;                   []] -> \
 +]::|       ; Shift + ]         [}] -> |
 
-~F15::Send ""
+
+; F15: Alt+Tab with Alt held until 3s after keyup; re-press within 3s sends Tab again
+f15AltHeld := false
+f15AltReleaseMs := 2000
+
+*F15:: {
+    global f15AltHeld, f15AltReleaseMs
+    SetTimer(ReleaseAltAfterF15, 0)  ; cancel pending release
+    if (!f15AltHeld) {
+        Send "{Alt down}"
+        f15AltHeld := true
+    }
+    Send "{Tab}"
+    KeyWait "F15"
+    SetTimer(ReleaseAltAfterF15, -f15AltReleaseMs)
+}
+
+ReleaseAltAfterF15() {
+    global f15AltHeld
+    if f15AltHeld {
+        Send "{Alt up}"
+        f15AltHeld := false
+    }
+}
+
+; F14: Alt+Tab+Shift with Alt held until 3s after keyup; re-press within 3s sends Tab again
+f14AltHeld := false
+f14AltReleaseMs := 2000
+
+*F14:: {
+    global f14AltHeld, f14AltReleaseMs
+    SetTimer(ReleaseAltAfterF14, 0)  ; cancel pending release
+    if (!f14AltHeld) {
+        Send "{Alt down}"
+        f14AltHeld := true
+    }
+    Send "{Shift down}{Tab}{Shift up}"
+    KeyWait "F14"
+    SetTimer(ReleaseAltAfterF14, -f14AltReleaseMs)
+}
+
+ReleaseAltAfterF14() {
+    global f14AltHeld
+    if f14AltHeld {
+        Send "{Alt up}"
+        f14AltHeld := false
+    }
+}
