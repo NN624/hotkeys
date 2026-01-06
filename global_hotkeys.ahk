@@ -434,3 +434,80 @@ ReleaseAltAfterF14() {
         f14AltHeld := false
     }
 }
+
+; ####### Brave ChatGPT Toggle (first: always new window, next: use hwnd) #######
+; Ctrl+Space:
+;  - 初回/ウィンドウ消滅時: 必ず新しいウィンドウで ChatGPT(app) を起動
+;  - 2回目以降: 起動したウィンドウの ahk_id(ハンドル) で最小化/復元/アクティブ切替
+
+chatgptExe  := A_ProgramFiles "\BraveSoftware\Brave-Browser\Application\brave.exe"
+chatgptUrl  := "https://chatgpt.com"
+chatgptArgs := "--new-window --app=" chatgptUrl
+
+global chatgptHwnd := 0
+
+^Space::ToggleChatGPT()
+
+ToggleChatGPT() {
+    global chatgptExe, chatgptArgs, chatgptHwnd
+
+    ; 1) 2回目以降：保存したハンドルが有効ならそれをトグル（タイトル変化の影響なし）
+    if (chatgptHwnd && WinExist("ahk_id " chatgptHwnd)) {
+        id := "ahk_id " chatgptHwnd
+
+        if (WinGetMinMax(id) = -1)
+            WinRestore(id)
+
+        if WinActive(id)
+            WinMinimize(id)
+        else
+            WinActivate(id)
+        return
+    }
+
+    ; 2) 初回 or 既存ウィンドウが閉じられた：必ず新しいウィンドウで起動
+    if !FileExist(chatgptExe) {
+        MsgBox "Braveが見つかりません:`n" chatgptExe
+        return
+    }
+
+    ; 起動前に、いま存在する Brave のウィンドウ一覧を覚える（差分検出用）
+    old := Map()
+    for hwnd in WinGetList("ahk_exe brave.exe")
+        old[hwnd] := true
+
+    try {
+        Run('"' chatgptExe '" ' chatgptArgs)
+
+        ; 新しく増えた Brave ウィンドウの hwnd を拾う
+        newHwnd := 0
+        deadline := A_TickCount + 5000  ; 最大5秒待つ
+        while (A_TickCount < deadline) {
+            for hwnd in WinGetList("ahk_exe brave.exe") {
+                if !old.Has(hwnd) {
+                    newHwnd := hwnd
+                    break
+                }
+            }
+            if newHwnd
+                break
+            Sleep 50
+        }
+
+        ; 取れたら保存して前面へ
+        if newHwnd {
+            chatgptHwnd := newHwnd
+            WinActivate("ahk_id " chatgptHwnd)
+        } else {
+            ; まれに差分で拾えない環境向け保険：直近のアクティブBraveを掴む
+            if WinWait("ahk_exe brave.exe", , 5) {
+                chatgptHwnd := WinExist("A")  ; アクティブウィンドウの hwnd
+                WinActivate("ahk_id " chatgptHwnd)
+            }
+        }
+
+    } catch as err {
+        MsgBox "ChatGPTの起動に失敗しました:`n" err.Message
+    }
+}
+
