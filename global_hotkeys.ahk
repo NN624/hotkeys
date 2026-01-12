@@ -94,8 +94,8 @@ F19 & l::
         Send "{End}"
 }
 
-; F19 & Click で英字モード
-F19 & LButton::
+; F19 & Enter で英字モード
+F19 & Enter::
 {
     IME_SET(0)
 }
