@@ -95,15 +95,28 @@ F19 & l::
 }
 
 ; F19 & Enter で英字モード
-F19 & Enter::
-{
-    IME_SET(0)
-}
+; F19 & Enter::
+; {
+;     IME_SET(0)
+; }
 
 ; F19 で日本語モード
 F19::
 {
-    IME_SET(1)
+    ; IME_SET(1)
+
+    KeyWait "F19"  ; F19が離されるまで待機
+
+    if (A_PriorHotkey != "F19")
+        return  ; 他キーが関与していたら無視
+
+    ; IME_SET(1)  ; IMEオンに設定
+    if IME_GET() = 0 {
+        IME_SET(1)  ; IMEがオフならオンに設定
+    }
+    else {
+        IME_SET(0)  ; IMEがオンならオフに設定
+    }
 }
 
 ; ####### rikanaa.ahk #######
