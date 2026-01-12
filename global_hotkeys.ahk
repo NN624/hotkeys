@@ -107,8 +107,8 @@ F19::
 
     KeyWait "F19"  ; F19が離されるまで待機
 
-    if (A_PriorHotkey != "F19")
-        return  ; 他キーが関与していたら無視
+    ; if (A_PriorHotkey != "F19")
+    ;     return  ; 他キーが関与していたら無視
 
     ; IME_SET(1)  ; IMEオンに設定
     if IME_GET() = 0 {
