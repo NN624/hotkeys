@@ -387,16 +387,20 @@ F16::`    ;         半角/全角     -> `
 +]::|       ; Shift + ]         [}] -> |
 
 
-; F15: Alt+Tab with Alt held until 3s after keyup; re-press within 3s sends Tab again
+; ウィンドウ切り替え（下（右）へ）
 f15AltHeld := false
 f15AltReleaseMs := 2000
+altHoldCount := 0
 
 *F15:: {
-    global f15AltHeld, f15AltReleaseMs
+    global f15AltHeld, f15AltReleaseMs, altHoldCount
     SetTimer(ReleaseAltAfterF15, 0)  ; cancel pending release
     if (!f15AltHeld) {
-        Send "{Alt down}"
+        if (altHoldCount = 0) {
+            Send "{Alt down}"
+        }
         f15AltHeld := true
+        altHoldCount += 1
     }
     Send "{Tab}"
     KeyWait "F15"
@@ -404,23 +408,30 @@ f15AltReleaseMs := 2000
 }
 
 ReleaseAltAfterF15() {
-    global f15AltHeld
+    global f15AltHeld, altHoldCount
     if f15AltHeld {
-        Send "{Alt up}"
         f15AltHeld := false
+        altHoldCount -= 1
+        if (altHoldCount <= 0) {
+            altHoldCount := 0
+            Send "{Alt up}"
+        }
     }
 }
 
-; F14: Alt+Tab+Shift with Alt held until 3s after keyup; re-press within 3s sends Tab again
+; ウィンドウ切り替え（上（左）へ）
 f14AltHeld := false
 f14AltReleaseMs := 2000
 
 *F14:: {
-    global f14AltHeld, f14AltReleaseMs
+    global f14AltHeld, f14AltReleaseMs, altHoldCount
     SetTimer(ReleaseAltAfterF14, 0)  ; cancel pending release
     if (!f14AltHeld) {
-        Send "{Alt down}"
+        if (altHoldCount = 0) {
+            Send "{Alt down}"
+        }
         f14AltHeld := true
+        altHoldCount += 1
     }
     Send "{Shift down}{Tab}{Shift up}"
     KeyWait "F14"
@@ -428,10 +439,14 @@ f14AltReleaseMs := 2000
 }
 
 ReleaseAltAfterF14() {
-    global f14AltHeld
+    global f14AltHeld, altHoldCount
     if f14AltHeld {
-        Send "{Alt up}"
         f14AltHeld := false
+        altHoldCount -= 1
+        if (altHoldCount <= 0) {
+            altHoldCount := 0
+            Send "{Alt up}"
+        }
     }
 }
 
@@ -446,7 +461,7 @@ chatgptArgs := "--new-window --app=" chatgptUrl
 
 global chatgptHwnd := 0
 
-^Space::ToggleChatGPT()
+; ^Space::ToggleChatGPT()
 
 ToggleChatGPT() {
     global chatgptExe, chatgptArgs, chatgptHwnd
