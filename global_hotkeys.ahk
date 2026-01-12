@@ -51,55 +51,14 @@ IME_GET(WinTitle:="A")  {
             ,  "Int", 0)      ;lParam  : 0
 }
 
-; F18::{
-;     ; Send "{Alt down}{``}{Alt up}"
-;     IME_SET(0)
-;     KeyWait "F18"
-; }
-
-; ; F18 + n で前のタブ
-; F18 & n::{
-;     Send "{Ctrl down}{Shift down}{Tab}"
-;     KeyWait "," ; カンマキーが離されるまで待機
-;     Send "{Shift up}"
-; }
-; ; F18 + m で次のタブ
-; F18 & m::{
-;     Send "{Ctrl down}{Tab}"
-;     KeyWait "." ; ピリオドキーが離されるまで待機
-; }
-; ; F18キーが離されたら全て解放
-; ~F18 up::{
-;     Send "{Ctrl up}{Shift up}"
-; }
-
-; ~F19::{
-;     Send "{Alt down}{``}{Alt up}"
-;     ; IME_SET(1)  ; IMEオンに設定
-;     KeyWait "F19"  ; F19が離されるまで待機
-; }
-
-F19::{
-    KeyWait "F19"  ; F19が離されるまで待機
-
-    if (A_PriorHotkey != "F19")
-        return  ; 他キーが関与していたら無視
-
-    ; IME_SET(1)  ; IMEオンに設定
-    if IME_GET() = 0 {
-        IME_SET(1)  ; IMEがオフならオンに設定
-    }
-    else {
-        IME_SET(0)  ; IMEがオンならオフに設定
-    }
-}
+; グローバルホットキー定義
 F19 & n::Send "{Volume_Down}"
 F19 & m::Send "{Volume_Up}"
 F19 & ,::Send "{Media_Play_Pause}"
 F19 & p::Send "{Ctrl Down}{Shift Down}{P Down}{P Up}{Shift Up}{Ctrl Up}" ; vscodeのコマンドパレットを開く
 F19 & o::Send "{F1}" ; vscodeのファイルを名前で検索を開く
 
-; shift + F19 + k でshift + PgUp
+; shift & F19 & k でshift & PgUp
 F19 & k::
 {
     if GetKeyState("Shift", "P")
@@ -107,7 +66,8 @@ F19 & k::
     else
         Send "{PgUp}"
 }
-; shift + j でshift + Pgdn
+
+; shift & F19 & j でshift & Pgdn
 F19 & j::
 {
     if GetKeyState("Shift", "P")
@@ -115,7 +75,8 @@ F19 & j::
     else
         Send "{Pgdn}"
 }
-; shift + h でshift + Home
+
+; shift & F19 & h でshift & Home
 F19 & h::
 {
     if GetKeyState("Shift", "P")
@@ -123,7 +84,8 @@ F19 & h::
     else
         Send "{Home}"
 }
-; shift + l でshift + End
+
+; shift & F19 & l でshift & End
 F19 & l::
 {
     if GetKeyState("Shift", "P")
@@ -132,7 +94,17 @@ F19 & l::
         Send "{End}"
 }
 
+; F19 & Click で英字モード
+F19 & LButton::
+{
+    IME_SET(0)
+}
 
+; F19 で日本語モード
+F19::
+{
+    IME_SET(1)
+}
 
 ; ####### rikanaa.ahk #######
 ; --- グローバル変数 ---
