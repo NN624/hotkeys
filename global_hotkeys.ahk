@@ -98,21 +98,6 @@ F19 & m::Send "{Volume_Up}"
 F19 & ,::Send "{Media_Play_Pause}"
 F19 & p::Send "{Ctrl Down}{Shift Down}{P Down}{P Up}{Shift Up}{Ctrl Up}" ; vscodeのコマンドパレットを開く
 F19 & o::Send "{F1}" ; vscodeのファイルを名前で検索を開く
-; F19 + u で前のウィンドウ（Alt押しっぱなし対応）
-F19 & u::{
-    Send "{Alt down}{Shift down}{Tab}"
-    KeyWait "," ; カンマキーが離されるまで待機
-    Send "{Shift up}"
-}
-; F19 + i で次のウィンドウ（Alt押しっぱなし対応）
-F19 & i::{
-    Send "{Alt down}{Tab}"
-    KeyWait "." ; ピリオドキーが離されるまで待機
-}
-; F19キーが離されたら全て解放
-~F19 up::{
-    Send "{Alt up}{Shift up}"
-}
 
 ; shift + F19 + k でshift + PgUp
 F19 & k::
