@@ -446,7 +446,7 @@ chatgptArgs := "--new-window --app=" chatgptUrl
 
 global chatgptHwnd := 0
 
-; ^Space::ToggleChatGPT()
+^Space::ToggleChatGPT()
 
 ToggleChatGPT() {
     global chatgptExe, chatgptArgs, chatgptHwnd
